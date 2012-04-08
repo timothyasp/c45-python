@@ -1,0 +1,103 @@
+Id,Political Party,Ideology,Race,Gender,Religion,Family Income,Education,Age,Region,Bush Approval,Vote
+-1,3,3,3,2,3,6,3,4,4,2,2
+Vote
+3,Democratic,Conservative,Black,Male,Catholic,50000-74999,College,45-64,South,Disapprove,Obama
+4,Republican,Moderate,Black,Male,Other,Less than 30000,College,65+,Midwest,Disapprove,Obama
+5,Independent,Moderate,White,Male,Protestant,50000-74999,H.S. diploma or less,30-44,Midwest,Disapprove,McCain
+6,Democratic,Liberal,White,Female,Catholic,150000+,College,45-64,Northeast,Disapprove,Obama
+7,Republican,Liberal,Black,Male,Protestant,100000-149999,H.S. diploma or less,65+,South,Approve,Obama
+8,Independent,Conservative,White,Male,Other,30000-49999,Post-Grad,30-44,South,Disapprove,McCain
+9,Republican,Moderate,White,Female,Other,Less than 30000,H.S. diploma or less,30-44,South,Approve,Obama
+10,Independent,Liberal,Other,Male,Protestant,Less than 30000,College,45-64,South,Disapprove,Obama
+11,Republican,Moderate,White,Female,Catholic,75000-99999,College,30-44,Midwest,Disapprove,Obama
+12,Independent,Conservative,White,Male,Other,Less than 30000,H.S. diploma or less,45-64,Midwest,Disapprove,McCain
+13,Independent,Liberal,Black,Male,Protestant,150000+,Post-Grad,65+,South,Approve,Obama
+14,Democratic,Conservative,White,Female,Catholic,30000-49999,H.S. diploma or less,30-44,South,Disapprove,Obama
+15,Democratic,Moderate,Black,Female,Other,50000-74999,College,30-44,South,Disapprove,Obama
+16,Republican,Moderate,White,Male,Other,150000+,College,45-64,Midwest,Approve,McCain
+17,Democratic,Moderate,White,Male,Protestant,Less than 30000,Post-Grad,18-29,Northeast,Disapprove,Obama
+18,Democratic,Conservative,Other,Female,Catholic,75000-99999,H.S. diploma or less,30-44,Northeast,Disapprove,Obama
+19,Republican,Moderate,White,Female,Protestant,100000-149999,College,30-44,South,Disapprove,Obama
+20,Republican,Moderate,White,Female,Protestant,Less than 30000,College,45-64,Midwest,Approve,Obama
+21,Independent,Conservative,White,Male,Catholic,30000-49999,College,45-64,South,Disapprove,McCain
+22,Democratic,Moderate,White,Female,Protestant,50000-74999,H.S. diploma or less,65+,Midwest,Approve,Obama
+23,Republican,Moderate,Black,Male,Protestant,150000+,College,18-29,Midwest,Disapprove,Obama
+24,Independent,Moderate,Black,Male,Protestant,30000-49999,College,18-29,Northeast,Approve,Obama
+25,Independent,Moderate,White,Male,Protestant,30000-49999,Post-Grad,30-44,South,Disapprove,McCain
+26,Democratic,Conservative,White,Female,Catholic,50000-74999,H.S. diploma or less,65+,South,Disapprove,Obama
+27,Republican,Liberal,White,Female,Protestant,Less than 30000,College,30-44,South,Disapprove,Obama
+28,Independent,Moderate,White,Male,Protestant,30000-49999,College,45-64,Northeast,Approve,McCain
+29,Democratic,Conservative,Black,Female,Protestant,100000-149999,College,30-44,Northeast,Disapprove,Obama
+30,Democratic,Moderate,White,Male,Protestant,30000-49999,Post-Grad,45-64,Northeast,Disapprove,McCain
+31,Democratic,Liberal,White,Male,Protestant,30000-49999,H.S. diploma or less,45-64,Northeast,Disapprove,McCain
+32,Democratic,Conservative,White,Male,Protestant,Less than 30000,College,65+,South,Approve,McCain
+33,Independent,Moderate,White,Female,Catholic,75000-99999,College,30-44,South,Disapprove,Obama
+34,Republican,Moderate,White,Female,Other,Less than 30000,College,45-64,South,Disapprove,Obama
+35,Independent,Liberal,White,Male,Protestant,30000-49999,H.S. diploma or less,30-44,Northeast,Approve,McCain
+36,Republican,Liberal,White,Male,Other,100000-149999,College,18-29,Northeast,Approve,Obama
+37,Republican,Conservative,Other,Female,Protestant,30000-49999,College,18-29,South,Approve,Obama
+38,Democratic,Conservative,White,Female,Catholic,Less than 30000,College,30-44,South,Disapprove,Obama
+39,Republican,Moderate,White,Male,Protestant,30000-49999,Post-Grad,45-64,West,Disapprove,McCain
+40,Democratic,Conservative,White,Female,Protestant,100000-149999,H.S. diploma or less,45-64,West,Disapprove,Obama
+41,Democratic,Liberal,White,Female,Other,30000-49999,College,18-29,West,Approve,Obama
+42,Independent,Moderate,White,Male,Other,50000-74999,Post-Grad,45-64,Northeast,Disapprove,McCain
+43,Democratic,Conservative,White,Male,Protestant,150000+,College,65+,Northeast,Disapprove,McCain
+44,Independent,Liberal,Other,Female,Protestant,100000-149999,College,65+,West,Disapprove,Obama
+45,Republican,Conservative,Other,Male,Catholic,150000+,College,30-44,South,Approve,Obama
+46,Republican,Moderate,White,Male,Catholic,100000-149999,H.S. diploma or less,18-29,South,Approve,Obama
+47,Independent,Moderate,White,Male,Protestant,75000-99999,College,45-64,Midwest,Disapprove,McCain
+48,Republican,Conservative,Black,Female,Catholic,Less than 30000,College,45-64,Midwest,Disapprove,Obama
+49,Republican,Moderate,White,Female,Catholic,30000-49999,College,45-64,South,Disapprove,Obama
+50,Democratic,Moderate,Black,Male,Protestant,150000+,Post-Grad,65+,Northeast,Approve,Obama
+51,Republican,Liberal,Other,Male,Protestant,30000-49999,H.S. diploma or less,65+,Northeast,Disapprove,Obama
+52,Democratic,Conservative,White,Female,Protestant,30000-49999,College,45-64,South,Disapprove,Obama
+53,Republican,Conservative,White,Female,Catholic,50000-74999,College,45-64,West,Approve,Obama
+54,Republican,Conservative,White,Male,Catholic,75000-99999,College,65+,West,Approve,McCain
+55,Republican,Moderate,White,Female,Protestant,Less than 30000,H.S. diploma or less,65+,Northeast,Disapprove,Obama
+56,Independent,Moderate,White,Female,Catholic,30000-49999,Post-Grad,45-64,South,Disapprove,Obama
+57,Republican,Liberal,Other,Female,Catholic,50000-74999,College,30-44,South,Disapprove,Obama
+58,Independent,Liberal,White,Male,Protestant,Less than 30000,Post-Grad,45-64,South,Disapprove,McCain
+59,Independent,Conservative,White,Male,Protestant,Less than 30000,H.S. diploma or less,45-64,Midwest,Disapprove,McCain
+60,Democratic,Conservative,White,Female,Catholic,30000-49999,College,45-64,Northeast,Disapprove,Obama
+61,Democratic,Moderate,White,Male,Other,50000-74999,H.S. diploma or less,30-44,Northeast,Approve,McCain
+62,Republican,Moderate,White,Female,Other,100000-149999,College,18-29,Northeast,Disapprove,Obama
+63,Republican,Liberal,Black,Female,Protestant,30000-49999,College,18-29,South,Disapprove,Obama
+64,Democratic,Moderate,White,Female,Catholic,50000-74999,H.S. diploma or less,45-64,South,Disapprove,Obama
+65,Independent,Conservative,Black,Male,Catholic,150000+,College,45-64,Midwest,Approve,Obama
+66,Republican,Liberal,White,Female,Protestant,Less than 30000,Post-Grad,45-64,Midwest,Disapprove,Obama
+67,Independent,Conservative,White,Female,Protestant,30000-49999,Post-Grad,45-64,South,Approve,Obama
+68,Independent,Moderate,White,Female,Catholic,50000-74999,H.S. diploma or less,30-44,South,Disapprove,Obama
+69,Republican,Moderate,Black,Male,Catholic,75000-99999,College,30-44,South,Approve,Obama
+70,Democratic,Conservative,White,Female,Protestant,100000-149999,College,18-29,Northeast,Disapprove,Obama
+71,Democratic,Conservative,White,Female,Catholic,30000-49999,College,45-64,West,Disapprove,Obama
+72,Republican,Moderate,Other,Female,Protestant,50000-74999,H.S. diploma or less,45-64,West,Approve,Obama
+73,Democratic,Moderate,White,Female,Protestant,50000-74999,H.S. diploma or less,65+,South,Approve,Obama
+74,Democratic,Conservative,White,Male,Protestant,Less than 30000,College,18-29,South,Approve,Obama
+75,Democratic,Moderate,Other,Female,Protestant,Less than 30000,College,45-64,Midwest,Disapprove,Obama
+76,Independent,Conservative,White,Male,Protestant,50000-74999,Post-Grad,45-64,Midwest,Disapprove,McCain
+77,Independent,Moderate,White,Male,Protestant,75000-99999,College,45-64,West,Disapprove,McCain
+78,Democratic,Liberal,White,Female,Protestant,150000+,College,45-64,South,Disapprove,Obama
+79,Republican,Conservative,Black,Male,Catholic,75000-99999,Post-Grad,30-44,South,Disapprove,Obama
+80,Democratic,Conservative,White,Male,Protestant,100000-149999,Post-Grad,65+,Midwest,Disapprove,McCain
+81,Republican,Conservative,White,Male,Catholic,75000-99999,H.S. diploma or less,18-29,South,Approve,Obama
+82,Independent,Liberal,White,Male,Protestant,100000-149999,College,45-64,Northeast,Disapprove,McCain
+83,Republican,Moderate,White,Female,Catholic,30000-49999,College,45-64,Midwest,Approve,Obama
+84,Independent,Moderate,White,Male,Catholic,75000-99999,H.S. diploma or less,65+,West,Disapprove,McCain
+85,Democratic,Conservative,White,Male,Protestant,100000-149999,College,65+,South,Disapprove,McCain
+86,Republican,Moderate,White,Female,Protestant,Less than 30000,H.S. diploma or less,45-64,South,Disapprove,Obama
+87,Republican,Liberal,White,Female,Protestant,50000-74999,College,45-64,Midwest,Approve,Obama
+88,Democratic,Moderate,White,Male,Protestant,50000-74999,College,45-64,Midwest,Approve,McCain
+89,Republican,Moderate,White,Female,Protestant,100000-149999,Post-Grad,45-64,South,Disapprove,Obama
+90,Independent,Moderate,White,Female,Protestant,30000-49999,H.S. diploma or less,18-29,South,Disapprove,Obama
+91,Republican,Liberal,Other,Female,Catholic,50000-74999,College,65+,South,Approve,Obama
+92,Democratic,Moderate,White,Male,Catholic,100000-149999,College,65+,Midwest,Disapprove,McCain
+93,Democratic,Conservative,White,Male,Other,100000-149999,College,45-64,Midwest,Disapprove,McCain
+94,Democratic,Liberal,White,Female,Protestant,Less than 30000,College,45-64,Midwest,Approve,Obama
+95,Republican,Moderate,White,Female,Catholic,150000+,H.S. diploma or less,45-64,Midwest,Disapprove,Obama
+96,Republican,Conservative,White,Male,Other,50000-74999,Post-Grad,45-64,South,Disapprove,McCain
+97,Independent,Moderate,White,Female,Protestant,75000-99999,College,30-44,South,Disapprove,Obama
+98,Republican,Conservative,White,Male,Catholic,30000-49999,College,30-44,South,Disapprove,McCain
+99,Independent,Liberal,White,Male,Catholic,30000-49999,H.S. diploma or less,45-64,Midwest,Disapprove,McCain
+100,Democratic,Liberal,White,Male,Other,50000-74999,College,30-44,Northeast,Disapprove,McCain
+101,Democratic,Conservative,White,Female,Protestant,100000-149999,College,65+,West,Disapprove,Obama
+102,Independent,Conservative,White,Female,Protestant,30000-49999,College,65+,Northeast,Disapprove,Obama

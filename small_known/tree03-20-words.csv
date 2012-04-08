@@ -1,0 +1,23 @@
+Id,Political Party,Ideology,Race,Gender,Religion,Family Income,Education,Age,Region,Bush Approval,Vote
+-1,3,3,3,2,3,6,3,4,4,2,2
+Vote
+3,Democratic,Liberal,White,Female,Protestant,Less than 30000,Post-Grad,45-64,Northeast,Disapprove,Obama
+4,Democratic,Moderate,White,Male,Protestant,75000-99999,Post-Grad,45-64,West,Disapprove,Obama
+5,Democratic,Moderate,White,Male,Protestant,50000-74999,H.S. diploma or less,45-64,Midwest,Approve,McCain
+6,Independent,Moderate,White,Female,Protestant,30000-49999,H.S. diploma or less,45-64,Midwest,Disapprove,Obama
+7,Republican,Liberal,White,Female,Catholic,75000-99999,H.S. diploma or less,30-44,Northeast,Approve,McCain
+8,Democratic,Conservative,White,Male,Protestant,Less than 30000,H.S. diploma or less,30-44,West,Disapprove,Obama
+9,Independent,Moderate,White,Male,Protestant,30000-49999,College,65+,South,Disapprove,Obama
+10,Republican,Conservative,White,Female,Catholic,Less than 30000,H.S. diploma or less,65+,Northeast,Approve,McCain
+11,Independent,Moderate,White,Female,Catholic,100000-149999,H.S. diploma or less,30-44,South,Approve,McCain
+12,Independent,Conservative,White,Male,Catholic,30000-49999,H.S. diploma or less,30-44,South,Disapprove,McCain
+13,Democratic,Moderate,Other,Female,Protestant,100000-149999,College,18-29,South,Disapprove,Obama
+14,Independent,Moderate,White,Male,Catholic,150000+,College,30-44,South,Approve,McCain
+15,Democratic,Moderate,White,Female,Catholic,75000-99999,College,45-64,South,Disapprove,Obama
+16,Republican,Conservative,White,Female,Protestant,30000-49999,College,65+,Northeast,Disapprove,Obama
+17,Democratic,Liberal,White,Female,Catholic,Less than 30000,College,30-44,Northeast,Disapprove,Obama
+18,Republican,Moderate,White,Male,Catholic,75000-99999,College,45-64,South,Disapprove,McCain
+19,Independent,Moderate,White,Female,Other,100000-149999,H.S. diploma or less,65+,West,Approve,McCain
+20,Republican,Conservative,White,Female,Catholic,75000-99999,College,45-64,Northeast,Disapprove,Obama
+21,Democratic,Conservative,White,Male,Protestant,75000-99999,College,65+,West,Approve,McCain
+22,Republican,Liberal,White,Male,Other,150000+,College,30-44,South,Disapprove,McCain
