@@ -3,6 +3,45 @@ import os.path
 import xml.dom.minidom
 import csv
 
+class Trainer:
+    def __init__(self, domain, data):
+        self.load_domain(domain)
+        self.read_data(data)
+
+    def load_domain(self, domain):
+        self.dom = xml.dom.minidom.parse(domain).documentElement
+
+        self.cols = {}
+        c_vals = []
+        for c in self.dom.getElementsByTagName('choice'):
+           c_name = c.getAttribute('name') 
+           c_type = c.getAttribute('type') 
+           c_vals.append((c_name, c_type))
+
+        for node in self.dom.getElementsByTagName('variable'):
+            col_name = node.getAttribute('name')
+            #print "Column: ", col_name
+            vals = []
+            for el in node.getElementsByTagName('group'):
+                name = el.getAttribute('name')
+                p = el.getAttribute('p')
+                vals.append({'name': name, 'p': float(p)})
+                #print "   Name: ",el.getAttribute('name')
+                #print "   P: ",el.getAttribute('p')
+
+            self.cols[col_name] = vals
+
+        # values can be accesses by : self.category['values'] or if you want the
+        # first element, it'd be self.category['values'][0]
+        self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': c_vals}
+        print self.cols
+        
+    def read_data(self, data):
+        t_reader = csv.reader(data)
+
+        self.dataset = []
+
+
 def main():
     num_args = len(sys.argv)
     domain = training = restriction = ''
@@ -18,15 +57,21 @@ def main():
         if num_args == 4:
             restriction = open(check_file(sys.argv[3]), "r") 
     
-    t_reader = csv.reader(training)
-    d_reader = xml.dom.minidom.parse(domain)
-    
+    d = Trainer(check_file(sys.argv[1]), check_file(sys.argv[2]))
+
+            
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 
         print 'Error can not find the specified file: ', filename
         return
     else:
         return filename
+
+# def find_most_frequent_label(D):
+
+# def create_label():
+
+# def enthropy(D):
 
 # D : Training Dataset
 # A : List of Attributes
@@ -98,7 +143,6 @@ def check_file(filename):
 # else return NULL;
 
 #def parse_domain():
-    
 
 if __name__ == '__main__':
     main()
