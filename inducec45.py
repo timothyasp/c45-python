@@ -16,9 +16,22 @@ class Trainer:
         # first element, it'd be self.category['values'][0]
         self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': self.get_choice()}
         self.cols = self.get_columns()
+        self.attributes = self.cols.keys()
 
-        print self.category
-        print self.cols
+    def read_data(self, data):
+        t_reader = csv.reader(data)
+
+        self.data = []
+        self.columns = t_reader.next()
+        self.frequency = t_reader.next()
+        category = t_reader.next()
+        print "columns: ",self.columns
+        print "frequency: ",self.frequency
+        print "category: ",category
+        for row in t_reader:
+            self.data.append(row)
+
+        print "data: ",self.data
 
     def get_columns(self):
         cols = {}
@@ -48,13 +61,7 @@ class Trainer:
            vals.append((c_name, c_type))
 
         return vals
-
         
-    def read_data(self, data):
-        t_reader = csv.reader(data)
-
-        self.dataset = []
-
 
 def main():
     num_args = len(sys.argv)
@@ -71,9 +78,10 @@ def main():
         if num_args == 4:
             restriction = open(check_file(sys.argv[3]), "r") 
     
-    d = Trainer(check_file(sys.argv[1]), check_file(sys.argv[2]))
+    d = Trainer(domain, training)
 
-            
+#    print c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation())
+
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 
         print 'Error can not find the specified file: ', filename
@@ -92,7 +100,7 @@ def check_file(filename):
 # A : List of Attributes
 # T : Constructed Decision tree
 
-#def c45(D, A, T, threshold):
+#def c45(D, A, T):
 # Step 1: check termination conditions
 # D contains records with the same class label c
 # if for all d is in D: class(d) = ci then
