@@ -9,32 +9,46 @@ class Trainer:
         self.read_data(data)
 
     def load_domain(self, domain):
+        # Load the domain into a parseable document object
         self.dom = xml.dom.minidom.parse(domain).documentElement
-
-        self.cols = {}
-        c_vals = []
-        for c in self.dom.getElementsByTagName('choice'):
-           c_name = c.getAttribute('name') 
-           c_type = c.getAttribute('type') 
-           c_vals.append((c_name, c_type))
-
-        for node in self.dom.getElementsByTagName('variable'):
-            col_name = node.getAttribute('name')
-            #print "Column: ", col_name
-            vals = []
-            for el in node.getElementsByTagName('group'):
-                name = el.getAttribute('name')
-                p = el.getAttribute('p')
-                vals.append({'name': name, 'p': float(p)})
-                #print "   Name: ",el.getAttribute('name')
-                #print "   P: ",el.getAttribute('p')
-
-            self.cols[col_name] = vals
 
         # values can be accesses by : self.category['values'] or if you want the
         # first element, it'd be self.category['values'][0]
-        self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': c_vals}
+        self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': self.get_choice()}
+        self.cols = self.get_columns()
+
+        print self.category
         print self.cols
+
+    def get_columns(self):
+        cols = {}
+
+        for node in self.dom.getElementsByTagName('variable'):
+            col_name = node.getAttribute('name')
+            cols[col_name] = self.get_group(node)
+
+        return cols
+
+    def get_group(self, node):
+        vals = []
+
+        for el in node.getElementsByTagName('group'):
+            name = el.getAttribute('name')
+            p    = el.getAttribute('p')
+            vals.append({'name': name, 'p': float(p)})
+
+        return vals
+
+    def get_choice(self):
+        vals = []
+
+        for c in self.dom.getElementsByTagName('choice'):
+           c_name = c.getAttribute('name') 
+           c_type = c.getAttribute('type') 
+           vals.append((c_name, c_type))
+
+        return vals
+
         
     def read_data(self, data):
         t_reader = csv.reader(data)
@@ -66,6 +80,7 @@ def check_file(filename):
         return
     else:
         return filename
+
 
 # def find_most_frequent_label(D):
 
