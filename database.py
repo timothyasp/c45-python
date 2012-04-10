@@ -34,4 +34,28 @@ class ElectionDatabase:
             #s.append()
             #s.append(rows)
             #print "dictionary: ", slices
+       
+    def is_homogeneous(self, data):
+        first = data[0] 
+        for d in data:
+            if (d != first):
+                return False
+        return True
+        """category = str(category).lower()
+        print category
+        statment = "SELECT COUNT(DISTINCT %s) FROM election_data_num WHERE %s = %s"  
+        self.cursor.execute(statment, category, attr, val)
+
         
+        row = self.cursor.fetchone()
+        print int(row[0])  
+        if int(row[0]) == 1:
+            return True 
+        else: 
+            return False 
+        """
+
+    def clean_up_nums(self):
+        statment = "truncate table election_data_num"  
+        self.cursor.execute(statment)
+
