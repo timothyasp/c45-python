@@ -215,8 +215,9 @@ class ClassificationData(CSVData):
                         x = row[i] = -1
                     x = row[i] = int(x)
                 print tuple(row)
-                db.insert_row_string(tuple(row)) 
-            row_ct += 1    
+                db.insert_row_num(tuple(row)) 
+            row_ct += 1
+    
 class TXTData(Data):
     def __init__(self, filename):
         super(TXTData, self).__init__(filename)		  

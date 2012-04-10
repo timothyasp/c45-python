@@ -13,12 +13,8 @@ class ElectionDatabase:
                                   db="db123655_466")
         self.cursor = self.db.cursor()
 
-    def insert_row_string(self, data_tuple):
-        self.cursor.execute("INSERT INTO election_data_string(id, party, ideology, race, gender, religion, income, education, age, region, bush_approval, vote)  values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                             data_tuple)      
-
     def insert_row_num(self, data_tuple):
-        self.cursor.execute("INSERT INTO election_data_num(id, party, ideology, race, gender, religion, income, education, age, region, bush_approval, vote)  values(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
+        self.cursor.execute("INSERT INTO election_data_num(id, party, ideology, race, gender, religion, income, education, age, region, bush_approval, vote)  values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                              data_tuple)      
 
     def data_slice(self, attribute, att_range):
