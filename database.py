@@ -21,14 +21,17 @@ class ElectionDatabase:
         print attribute
         print att_range
 
- 
+        slices = {} 
+        s = []
         for i in range(int(att_range)):
-            statment = "SELECT * FROM election_data WHERE party='" + str(i) + "'"      
-                    
-            print statment 
-#   self.cursor.execute("SELECT * FROM election_data_string WHERE political_party %s", (str(i)));   
+            index = i+1
+            statment = "SELECT * FROM election_data_num WHERE party = " + str(index)        
+            self.cursor.execute(statment)        
             rows = self.cursor.fetchall()
-            print "Group:"
-            for row in rows:
-                print row 
+            slices[index] = rows
+            print "dictionary: ", slices
+            return slices
+            #s.append()
+            #s.append(rows)
+            #print "dictionary: ", slices
         

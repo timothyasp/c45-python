@@ -14,7 +14,7 @@ class Trainer:
              #--for some reason I was having a hard time getting it to work with the numbers insert we should check that out
         attribute = class_data.names[1]
         data_range= class_data.domain_size[1]
-        #db.data_slice(attribute, data_range)
+        db.data_slice(attribute, data_range)
 
     def load_domain(self, domain):
         # Load the domain into a parseable document object
