@@ -2,11 +2,19 @@ import sys
 import os.path
 import xml.dom.minidom
 import csv
+from database import ElectionDatabase
+from data_types import CSVData, ClassificationData
 
 class Trainer:
-    def __init__(self, domain, data):
+    def __init__(self, domain, class_data, db):
         self.load_domain(domain)
-        self.read_data(data)
+        #by the time we are at this point we have the following things available. 
+        #1) class_data a ClassificationData object containing the headers of the csvdata file stored
+        #2) a database of the tuples 
+             #--for some reason I was having a hard time getting it to work with the numbers insert we should check that out
+        attribute = class_data.names[1]
+        data_range= class_data.domain_size[1]
+        #db.data_slice(attribute, data_range)
 
     def load_domain(self, domain):
         # Load the domain into a parseable document object
@@ -17,21 +25,6 @@ class Trainer:
         self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': self.get_choice()}
         self.cols = self.get_columns()
         self.attributes = self.cols.keys()
-
-    def read_data(self, data):
-        t_reader = csv.reader(data)
-
-        self.data = []
-        self.columns = t_reader.next()
-        self.frequency = t_reader.next()
-        category = t_reader.next()
-        print "columns: ",self.columns
-        print "frequency: ",self.frequency
-        print "category: ",category
-        for row in t_reader:
-            self.data.append(row)
-
-        print "data: ",self.data
 
     def get_columns(self):
         cols = {}
@@ -73,19 +66,30 @@ def main():
         return
     # If they are read them in
     else: 
-        domain = open(check_file(sys.argv[1]), "r")
-        training = open(check_file(sys.argv[2]), "r")
+        if check_file(sys.argv[1]) == -1 or check_file(sys.argv[2]) == -1:
+            return -1
+    
+        domain = open(sys.argv[1], "r")
+ 
+        #connect to our elections db, stored on my mediatemple  
+        db = ElectionDatabase()
+        db.connect()
+
+        #parse the rows directly to the db
+        class_data = ClassificationData(sys.argv[2]);
+        class_data.parse_tuples_to_db(db);
+
         if num_args == 4:
             restriction = open(check_file(sys.argv[3]), "r") 
     
-    d = Trainer(domain, training)
+    d = Trainer(domain, class_data, db)
 
 #    print c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation())
 
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 
         print 'Error can not find the specified file: ', filename
-        return
+        return -1
     else:
         return filename
 
