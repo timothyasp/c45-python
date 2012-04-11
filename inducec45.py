@@ -109,7 +109,7 @@ class Trainer:
         print int(self.column_size[key])
         for i in range(int(self.column_size[key])):
             val = i+1
-            print "Slice " + str(val) + ": " + str(self.db.slice_by(attr.lower().replace(' ', '_'), val))
+            print "Slice " + str(val) + ": " + str(self.db.slice_by(self.converter[attr], val))
 
     #return -1 when no attribute selected!!
     def select_splitting_attr(A, D, threshold):
