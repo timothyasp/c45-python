@@ -125,8 +125,8 @@ class Trainer:
         else:
              return -1;
 
-    #def entropyD(D):
-    #    for i in range(len(D)):
+    def entropyD(D):
+        for i in range(len(D)):
             
     #def entropyAi(D):
 
