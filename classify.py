@@ -12,6 +12,22 @@ def main():
         return
     # If they are read them in
     else: 
+        decision_file = open(sys.argv[2], "r")
+
+        tree = xml.dom.minidom.parse(decision_file)
+        iterate(tree)
+
+def iterate(node):
+    if node:
+        if len(node.childNodes) == 0:
+            return
+        #elif str(node.firstChild.tagName) == str("decision"):
+        #    print node.firstChild.data
+        else:
+            for child in node.childNodes:
+                print child.toxml()
+                iterate(child)
+            
         
 
 if __name__ == '__main__':
