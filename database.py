@@ -27,6 +27,7 @@ class ElectionDatabase:
     def slice_by(self, column, val):
         print "column: ", column
         statment = "SELECT * FROM election_data_num WHERE `" + column + "` = " + str(val) 
+        print "mysql statement: ", statment
         self.cursor.execute(statment)        
         return self.cursor.fetchall()
 

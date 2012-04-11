@@ -2,6 +2,7 @@ import sys
 import os.path
 import xml.dom.minidom
 import csv
+from collections import Counter
 from database import ElectionDatabase
 from data_types import CSVData, ClassificationData
 
@@ -70,46 +71,61 @@ class Trainer:
            vals.append((c_name, c_type))
 
         return vals
+
+    def find_most_frequent_label(self, D):
+        return Counter(D).most_common(1)
     
     # D : Dataset
     # A : Attributes
     # T : Tree we're building
-    def c45(self, D, A, T, threshold):
+    def c45(self, D, A, doc, threshold):
+        print "Attributes: ", A
         if self.db.is_homogenous(D):
-            print "Is Homogenous"
-            print D.keys()
-
+            node = doc.createElementNS(None, 'node')
+            node.setAttribute('var', D[0])
         # No more attributes to consider
         elif len(A) == 0:
-            print "None Left"
-
+            most_freq_label = self.find_most_frequent_label(D)
+            node = doc.createElementNS(None, 'node')
+            print "Most Freq label: ", most_freq_label
+            node.setAttribute('var', most_freq_label)
         else:
             # Step 2: select splitting attribute
             Ag = A[1]#select_splitting_attr(A, D, threshold)
 
             # no attribute is good for a split
             if (Ag == None):
-                print "No attr good for split: "
-                print D.keys()
+                most_freq_label = sorted(self.find_most_frequent_label(D))[0]
+                print "NONE Most Freq label: ", most_freq_label
+                node = doc.createElementNS(None, 'node')
+                node.setAttribute('var', most_freq_label)
+                doc.appendChild(node)
 
         # Step 3: Tree Construction
             else:
+                node = doc.createElementNS(None, 'node')
+
                 print "Step 3"
                 for attr in A:
                     Dv = self.data_slice(Ag)
-                    print Dv
-                    if len(Dv) == 0:
-                        self.c45(Dv, A.remove(Ag), T, threshold)
+                    if len(Dv) != 0:
+                        self.c45(Dv, A.remove(Ag), doc, threshold)
+                        edge = node.createElementNS(None, 'edge')
+                        edge.setAttribute('var', Ag)
+                        node.appendChild(edge)
+                        doc.appendChild(node)
+
                         print Ag
 
     def data_slice(self, attr):
-        print attr
         key = self.attributes.index(attr)
-        print key
-        print int(self.column_size[key])
+        lists = {}
         for i in range(int(self.column_size[key])):
             val = i+1
-            print "Slice " + str(val) + ": " + str(self.db.slice_by(self.converter[attr], val))
+            lists[val] = self.db.slice_by(self.converter[attr], val)
+            #print "Slice " + str(val) + ": " + str(self.db.slice_by(self.converter[attr], val))
+
+        return lists
 
     #return -1 when no attribute selected!!
     def select_splitting_attr(A, D, threshold):
@@ -127,6 +143,7 @@ class Trainer:
 
     def entropyD(D):
         for i in range(len(D)):
+            return
             
     #def entropyAi(D):
 
@@ -160,8 +177,11 @@ def main():
     
     d = Trainer(domain, class_data, db)
 
+    print d.data
 
-    d.c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation(), 0)
+    doc = xml.dom.minidom.parseString("<Tree></Tree>")
+    print doc.toxml()
+    d.c45(d.data, d.attributes, doc, 0)
 
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 

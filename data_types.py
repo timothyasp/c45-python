@@ -204,7 +204,7 @@ class ClassificationData(CSVData):
         row_ct = 0
         for row in reader:
             if row_ct == 0:
-               self.names = tuple(row)
+               self.names = row
             elif row_ct == 1:
                self.domain_size = tuple(row)
             elif row_ct == 2:
