@@ -2,6 +2,8 @@ import sys
 import os.path
 import xml.dom.minidom
 import csv
+import math 
+
 from database import ElectionDatabase
 from data_types import CSVData, ClassificationData
 
@@ -23,12 +25,15 @@ class Trainer:
         self.attributes  = class_data.names
         self.category    = class_data.category[0]
         self.column_size = class_data.domain_size
-        self.data        = self.db.load_data()
+        self.data        = class_data.tuples 
 
         print self.attributes
         print self.column_size
         print self.category[0]
-        print self.data
+        #print self.data
+        
+        print "entropy d =: "
+        print self.pr(self.data)
         #db.data_slice(attribute, data_range)
         #db.is_homogeneous(class_data.category)
 
@@ -70,7 +75,38 @@ class Trainer:
            vals.append((c_name, c_type))
 
         return vals
-    
+
+    def entropy(self, D):
+        index = self.attributes.index(self.category)
+        obama_ct = 0
+        mccain_ct = 0
+ 
+        for e in D:
+            if e[index] == 1:
+                obama_ct += 1
+            elif e[index] == 2:
+                mccain_ct += 1
+
+        obama_ct = obama_ct / float(len(D))
+        mccain_ct = mccain_ct / float(len(D))
+ 
+        entropy = -obama_ct * math.log(obama_ct, 2) - mccain_ct * math.log(mccain_ct, 2)
+        return entropy  
+
+    def entropyAi(D, Ai):
+       id_list = []
+       slices = self.db.slice_by(D, Ai, id_list)
+       entropies = []
+       total_entropy = 0;
+
+       for i, mslice in slices:
+           entropies[i] = entropy(mslice)
+       
+       for i, entropy in entropies:
+           total_entropy += len(slices[i])/len(D) * entropies[i]     
+
+       return total_entropy
+ 
     # D : Dataset
     # A : Attributes
     # T : Tree we're building
@@ -95,40 +131,27 @@ class Trainer:
         # Step 3: Tree Construction
             else:
                 print "Step 3"
-                for attr in A:
-                    Dv = self.data_slice(Ag)
+                index_list = []
+                for var in A:
+                    Dv = self.db.slice_by(Ag, var, index_list)
                     print Dv
                     if len(Dv) == 0:
                         self.c45(Dv, A.remove(Ag), T, threshold)
                         print Ag
 
-    def data_slice(self, attr):
-        print attr
-        key = self.attributes.index(attr)
-        print key
-        print int(self.column_size[key])
-        for i in range(int(self.column_size[key])):
-            val = i+1
-            print "Slice " + str(val) + ": " + str(self.db.slice_by(self.converter[attr], val))
-
     #return -1 when no attribute selected!!
     def select_splitting_attr(A, D, threshold):
-        p0 = enthropyD(D)
+        p0 = enthropy(D)
         p = {}
         gain = {}
-        for v in A: 
-            p[Ai] = enthropyAi(D);
-            gain[Ai] = p0 - p[Ai]; 
+        for attr in A: 
+            p[attr] = enthropyAi(D, attr);
+            gain[attr] = p0 - p[attr]; 
         best = max(gain)
         if best > threshold: 
             return gain.index(best)
         else:
              return -1;
-
-    def entropyD(D):
-        for i in range(len(D)):
-            
-    #def entropyAi(D):
 
 def main():
     num_args = len(sys.argv)
@@ -161,7 +184,7 @@ def main():
     d = Trainer(domain, class_data, db)
 
 
-    d.c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation(), 0)
+    #d.c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation(), 0)
 
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 

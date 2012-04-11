@@ -24,31 +24,14 @@ class ElectionDatabase:
 
         return rows
 
-    def slice_by(self, column, val):
+    def slice_by(self, attribute, val, index_set):
         print "column: ", column
         statment = "SELECT * FROM election_data_num WHERE `" + column + "` = " + str(val) 
         self.cursor.execute(statment)        
         return self.cursor.fetchall()
 
     def is_homogenous(self, data):
-        first = data[0] 
-        for d in data:
-            if (d != first):
-                return False
-        return True
-        """category = str(category).lower()
-        print category
-        statment = "SELECT COUNT(DISTINCT %s) FROM election_data_num WHERE %s = %s"  
-        self.cursor.execute(statment, category, attr, val)
-
-        
-        row = self.cursor.fetchone()
-        print int(row[0])  
-        if int(row[0]) == 1:
-            return True 
-        else: 
-            return False 
-        """
+        return False
 
     def clean_up_nums(self):
         statement = "truncate table election_data_num"  

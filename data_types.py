@@ -215,6 +215,7 @@ class ClassificationData(CSVData):
                         x = row[i] = -1
                     x = row[i] = int(x)
                 print tuple(row)
+                self.tuples.append(tuple(row))
                 db.insert_row_num(tuple(row)) 
             row_ct += 1
     
