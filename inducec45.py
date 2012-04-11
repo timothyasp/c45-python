@@ -9,15 +9,23 @@ class Trainer:
     def __init__(self, domain, class_data, db):
         self.load_domain(domain)
         self.db = db
+
         #by the time we are at this point we have the following things available. 
         #1) class_data a ClassificationData object containing the headers of the csvdata file stored
         #2) a database of the tuples 
              #--for some reason I was having a hard time getting it to work with the numbers insert we should check that out
-        self.class_data = class_data
-        self.attribute = class_data.names[1]
-        #data_range= class_data.domain_size[1]
+        self.class_data  = class_data
+        self.attributes  = class_data.names
+        self.category    = class_data.category
+        self.column_size = class_data.domain_size
+        self.data        = self.db.load_data()
+
+        print self.attributes
+        print self.column_size
+        print self.category[0]
+        print self.data
         #db.data_slice(attribute, data_range)
-        db.is_homogeneous(class_data.category)
+        #db.is_homogeneous(class_data.category)
 
     def load_domain(self, domain):
         # Load the domain into a parseable document object
@@ -61,41 +69,42 @@ class Trainer:
     # D : Dataset
     # A : Attributes
     # T : Tree we're building
-    def c45(D, A, T, threshold):
-        if self.db.is_homogeneous(D):
+    def c45(self, D, A, T, threshold):
+        if self.db.is_homogenous(D):
+            print "Is Homogenous"
             print D.keys()
-             #create leaf node r;
-             #label(r) := ci;
-             #T := r;
+
         # No more attributes to consider
-        # else if A = NONE LEFT then
         elif len(A) == 0:
-        #     c := find most frequent label(D);
-        #     create leaf node r;
-        #     label(r) := c;
-        # else 
+            print "None Left"
+
         else:
-        # Step 2: select splitting attribute
-        #     Ag := selectSplittingAttribute(A,D, threshold);
-        #    Ag = select_splitting_attr(A, D, threshold)
-        #     if Ag = NULL then //no attribute is good for a split
-        #    if (Ag == NULL):
-        #         create leaf node r;
-        #         label(r) := find most frequent label(D);
-        #         T := r;
-        #    else:
-        #     else // Step 3: Tree Construction
-        #         create tree node r;
-        #         label(r) := Ag;
-        #         foreach v is in dom(Ag) do
-        #             Dv := {t belongs in D|t[Ag] = v};
-        #             if Dv =6 NONE LEFT then
-        #                 C45(Dv, A - {Ag}, Tv); //recursive call
-        #                 append Tv to r with an edge labeled v;
-        #             endif
-        #         endfor
-        #     endif
-        # endif
+            # Step 2: select splitting attribute
+            Ag = A[0]#select_splitting_attr(A, D, threshold)
+
+            # no attribute is good for a split
+            if (Ag == None):
+                print "No attr good for split: "
+                print D.keys()
+
+        # Step 3: Tree Construction
+            else:
+                print "Step 3"
+                for attr in A:
+                    Dv = self.data_slice()
+                    if len(Dv) == 0:
+                        self.c45(Dv, A.remove(Ag), T, threshold)
+                        print Ag
+
+    def data_slice(self):
+        slices = {} 
+        for i in range(int(self.column_size)):
+            #index = int(i)+1
+            index = 1
+            slices[index] = self.db.slice_by(self.category,
+                                             self.column_size[i])
+            print "dictionary: ", slices
+            return slices
 
     #uses information gain
     # D : Training Dataset
@@ -155,7 +164,7 @@ def main():
     
     d = Trainer(domain, class_data, db)
 
-#    print c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation())
+    d.c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation(), 0)
 
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 

@@ -17,25 +17,19 @@ class ElectionDatabase:
         self.cursor.execute("INSERT INTO election_data_num(id, party, ideology, race, gender, religion, income, education, age, region, bush_approval, vote)  values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                              data_tuple)      
 
-    def data_slice(self, attribute, att_range):
-        print attribute
-        print att_range
+    def load_data(self):
+        statment = "SELECT * FROM election_data_num"
+        self.cursor.execute(statment)        
+        rows = self.cursor.fetchall()
 
-        slices = {} 
-        s = []
-        for i in range(int(att_range)):
-            index = i+1
-            statment = "SELECT * FROM election_data_num WHERE party = " + str(index)        
-            self.cursor.execute(statment)        
-            rows = self.cursor.fetchall()
-            slices[index] = rows
-            print "dictionary: ", slices
-            return slices
-            #s.append()
-            #s.append(rows)
-            #print "dictionary: ", slices
-       
-    def is_homogeneous(self, data):
+        return rows
+
+    def slice_by(self, attribute, index):
+        statment = "SELECT * FROM election_data_num WHERE " + attribute + " = " + str(index)        
+        self.cursor.execute(statment)        
+        return self.cursor.fetchall()
+
+    def is_homogenous(self, data):
         first = data[0] 
         for d in data:
             if (d != first):
@@ -56,6 +50,6 @@ class ElectionDatabase:
         """
 
     def clean_up_nums(self):
-        statment = "truncate table election_data_num"  
-        self.cursor.execute(statment)
+        statement = "truncate table election_data_num"  
+        self.cursor.execute(statement)
 
