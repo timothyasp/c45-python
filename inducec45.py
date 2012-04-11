@@ -3,6 +3,7 @@ import os.path
 import xml.dom.minidom
 import csv
 from collections import Counter
+import math 
 from database import ElectionDatabase
 from data_types import CSVData, ClassificationData
 
@@ -24,12 +25,15 @@ class Trainer:
         self.attributes  = class_data.names
         self.category    = class_data.category[0]
         self.column_size = class_data.domain_size
-        self.data        = self.db.load_data()
+        self.data        = class_data.tuples 
 
         print self.attributes
         print self.column_size
         print self.category[0]
-        print self.data
+        #print self.data
+        
+        #print "entropy d =: "
+        #print self.pr(self.data)
         #db.data_slice(attribute, data_range)
         #db.is_homogeneous(class_data.category)
 
@@ -74,7 +78,38 @@ class Trainer:
 
     def find_most_frequent_label(self, D):
         return Counter(D).most_common(1)
-    
+
+    def entropy(self, D):
+        index = self.attributes.index(self.category)
+        obama_ct = 0
+        mccain_ct = 0
+ 
+        for e in D:
+            if e[index] == 1:
+                obama_ct += 1
+            elif e[index] == 2:
+                mccain_ct += 1
+
+        obama_ct = obama_ct / float(len(D))
+        mccain_ct = mccain_ct / float(len(D))
+ 
+        entropy = -obama_ct * math.log(obama_ct, 2) - mccain_ct * math.log(mccain_ct, 2)
+        return entropy  
+
+    def entropyAi(D, Ai):
+       id_list = []
+       slices = self.db.slice_by(D, Ai, id_list)
+       entropies = []
+       total_entropy = 0;
+
+       for i, mslice in slices:
+           entropies[i] = entropy(mslice)
+       
+       for i, entropy in entropies:
+           total_entropy += len(slices[i])/len(D) * entropies[i]     
+
+       return total_entropy
+ 
     # D : Dataset
     # A : Attributes
     # T : Tree we're building
@@ -91,7 +126,7 @@ class Trainer:
             node.setAttribute('var', most_freq_label)
         else:
             # Step 2: select splitting attribute
-            Ag = A[1]#select_splitting_attr(A, D, threshold)
+            Ag = self.select_splitting_attr(A, D, threshold)
 
             # no attribute is good for a split
             if (Ag == None):
@@ -108,6 +143,7 @@ class Trainer:
                 print "Step 3"
                 for attr in A:
                     Dv = self.data_slice(Ag)
+
                     if len(Dv) != 0:
                         self.c45(Dv, A.remove(Ag), doc, threshold)
                         edge = node.createElementNS(None, 'edge')
@@ -128,24 +164,18 @@ class Trainer:
         return lists
 
     #return -1 when no attribute selected!!
-    def select_splitting_attr(A, D, threshold):
-        p0 = enthropyD(D)
+    def select_splitting_attr(self, A, D, threshold):
+        p0 = enthropy(D)
         p = {}
         gain = {}
-        for v in A: 
-            p[Ai] = enthropyAi(D);
-            gain[Ai] = p0 - p[Ai]; 
+        for attr in A: 
+            p[attr] = enthropyAi(D, attr);
+            gain[attr] = p0 - p[attr]; 
         best = max(gain)
         if best > threshold: 
             return gain.index(best)
         else:
              return -1;
-
-    def entropyD(D):
-        for i in range(len(D)):
-            return
-            
-    #def entropyAi(D):
 
 def main():
     num_args = len(sys.argv)
