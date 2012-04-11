@@ -10,6 +10,11 @@ class Trainer:
         self.load_domain(domain)
         self.db = db
 
+        self.converter = {'Id':'id', 'Political Party':'party', 'Ideology':'ideology', 
+                          'Race':'race', 'Gender':'gender', 'Religion':'religion', 
+                          'Family Income':'income', 'Education':'education', 'Age':'age',
+                          'Region':'region', 'Bush Approval':'bush_approval', 'Vote':'vote'}
+
         #by the time we are at this point we have the following things available. 
         #1) class_data a ClassificationData object containing the headers of the csvdata file stored
         #2) a database of the tuples 
@@ -106,33 +111,24 @@ class Trainer:
             print "dictionary: ", slices
             return slices
 
-    #uses information gain
-    # D : Training Dataset
-    # A : List of Attributes
-    #def select_splitting_attr(A, D, threshold):
-    # p0 := enthropy(D);
-    # for each Ai in A do
-    #     p[Ai] := enthropyAi (D);
-    #     Gain[Ai] = p0 - p[Ai]; //compute info gain
-    # endfor
-    # best := arg(findMax(Gain[]));
-    # if Gain[best] >threshold then return best
-    # else return NULL;
+    #return -1 when no attribute selected!!
+    def select_splitting_attr(A, D, threshold):
+        p0 = enthropyD(D)
+        p = {}
+        gain = {}
+        for v in A: 
+            p[Ai] = enthropyAi(D);
+            gain[Ai] = p0 - p[Ai]; 
+        best = max(gain)
+        if best > threshold: 
+            return gain.index(best)
+        else:
+             return -1;
 
-    #uses information gain ratio
-    # D : Training Dataset
-    # A : List of Attributes
-    #def select_splitting_attr_ratio(A, D, threshold);
-    # p0 := enthropy(D);
-    # for each Ai in A do
-    #     p[Ai] := enthropyAi (D);
-    #     Gain[Ai] := p0 - p[Ai]; //compute info gain
-    #     gainRatio[Ai] := Gain[Ai]/enthropy(Ai); //compute info gain ratio
-    # endfor
-    # best := arg(findMax(gainRatio[]));
-    # if Gain[best] >threshold then return best
-    # else return NULL;
-
+    #def entropyD(D):
+    #    for i in range(len(D)):
+            
+    #def entropyAi(D):
 
 def main():
     num_args = len(sys.argv)
