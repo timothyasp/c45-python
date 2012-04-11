@@ -21,7 +21,7 @@ class Trainer:
              #--for some reason I was having a hard time getting it to work with the numbers insert we should check that out
         self.class_data  = class_data
         self.attributes  = class_data.names
-        self.category    = class_data.category
+        self.category    = class_data.category[0]
         self.column_size = class_data.domain_size
         self.data        = self.db.load_data()
 
@@ -85,7 +85,7 @@ class Trainer:
 
         else:
             # Step 2: select splitting attribute
-            Ag = A[0]#select_splitting_attr(A, D, threshold)
+            Ag = A[1]#select_splitting_attr(A, D, threshold)
 
             # no attribute is good for a split
             if (Ag == None):
@@ -96,20 +96,20 @@ class Trainer:
             else:
                 print "Step 3"
                 for attr in A:
-                    Dv = self.data_slice()
+                    Dv = self.data_slice(Ag)
+                    print Dv
                     if len(Dv) == 0:
                         self.c45(Dv, A.remove(Ag), T, threshold)
                         print Ag
 
-    def data_slice(self):
-        slices = {} 
-        for i in range(int(self.column_size)):
-            #index = int(i)+1
-            index = 1
-            slices[index] = self.db.slice_by(self.category,
-                                             self.column_size[i])
-            print "dictionary: ", slices
-            return slices
+    def data_slice(self, attr):
+        print attr
+        key = self.attributes.index(attr)
+        print key
+        print int(self.column_size[key])
+        for i in range(int(self.column_size[key])):
+            val = i+1
+            print "Slice " + str(val) + ": " + str(self.db.slice_by(attr.lower().replace(' ', '_'), val))
 
     #return -1 when no attribute selected!!
     def select_splitting_attr(A, D, threshold):
@@ -159,6 +159,7 @@ def main():
             restriction = open(check_file(sys.argv[3]), "r") 
     
     d = Trainer(domain, class_data, db)
+
 
     d.c45(d.data, d.attributes, xml.dom.minidom.getDOMImplementation(), 0)
 
