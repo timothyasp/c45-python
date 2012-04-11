@@ -197,14 +197,20 @@ class ClassificationData(CSVData):
     def __init__(self, fn):
         super(ClassificationData, self).__init__(fn)	
 	  
-    def parse_tuples_to_db(self, db):
+    def build_size_map(self):
+        mdict = {}
+        for i in range(len(self.domain_size)):
+            mdict[self.attributes[i]] = self.domain_size[i]
+        self.size_map = mdict
+    
+    def parse_tuples(self):
         reader = csv.reader(open(self.filename, 'r'))
         self.tuples=[]
         
         row_ct = 0
         for row in reader:
             if row_ct == 0:
-               self.names = row
+               self.attributes = row
             elif row_ct == 1:
                self.domain_size = tuple(row)
             elif row_ct == 2:
@@ -216,9 +222,9 @@ class ClassificationData(CSVData):
                     x = row[i] = int(x)
                 print tuple(row)
                 self.tuples.append(tuple(row))
-                db.insert_row_num(tuple(row)) 
             row_ct += 1
-    
+        self.build_size_map()
+
 class TXTData(Data):
     def __init__(self, filename):
         super(TXTData, self).__init__(filename)		  

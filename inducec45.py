@@ -6,37 +6,24 @@ from collections import Counter
 import math 
 from database import ElectionDatabase
 from data_types import CSVData, ClassificationData
+from copy import deepcopy
 
 class Trainer:
-    def __init__(self, domain, class_data, db):
+    def __init__(self, domain, class_data, document):
         self.load_domain(domain)
-        self.db = db
-
-        self.converter = {'Id':'id', 'Political Party':'party', 'Ideology':'ideology', 
-                          'Race':'race', 'Gender':'gender', 'Religion':'religion', 
-                          'Family Income':'income', 'Education':'education', 'Age':'age',
-                          'Region':'region', 'Bush Approval':'bush_approval', 'Vote':'vote'}
-
-        #by the time we are at this point we have the following things available. 
-        #1) class_data a ClassificationData object containing the headers of the csvdata file stored
-        #2) a database of the tuples 
-             #--for some reason I was having a hard time getting it to work with the numbers insert we should check that out
+        self.edge = 0 
         self.class_data  = class_data
-        self.attributes  = class_data.names
+        self.attributes  = class_data.attributes
         self.category    = class_data.category[0]
         self.column_size = class_data.domain_size
         self.data        = class_data.tuples 
+        self.doc = document
 
+        print "Header information: "
         print self.attributes
         print self.column_size
-        print self.category[0]
-        #print self.data
-        
-        #print "entropy d =: "
-        #print self.pr(self.data)
-        #db.data_slice(attribute, data_range)
-        #db.is_homogeneous(class_data.category)
-
+        print self.category + "\n\n"
+        print self.cols
     def load_domain(self, domain):
         # Load the domain into a parseable document object
         self.dom = xml.dom.minidom.parse(domain).documentElement
@@ -46,7 +33,7 @@ class Trainer:
         self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': self.get_choice()}
         self.cols = self.get_columns()
         self.attributes = self.cols.keys()
-
+    
     def get_columns(self):
         cols = {}
 
@@ -55,7 +42,7 @@ class Trainer:
             cols[col_name] = self.get_group(node)
 
         return cols
-
+ 
     def get_group(self, node):
         vals = []
 
@@ -76,104 +63,161 @@ class Trainer:
 
         return vals
 
-    def find_most_frequent_label(self, D):
-        return Counter(D).most_common(1)
-
     def entropy(self, D):
-        index = self.attributes.index(self.category)
+        index = 11 
         obama_ct = 0
         mccain_ct = 0
- 
+
+        if len(D) == 0:
+            return 0        
+
         for e in D:
+            print e
             if e[index] == 1:
                 obama_ct += 1
             elif e[index] == 2:
                 mccain_ct += 1
-
+             
         obama_ct = obama_ct / float(len(D))
         mccain_ct = mccain_ct / float(len(D))
- 
+
+        print "Percent 1: " + str(obama_ct)
+        print "Percent 2: " + str(mccain_ct)
+
+        if obama_ct == 0 or mccain_ct == 0:
+            return 0        
+
         entropy = -obama_ct * math.log(obama_ct, 2) - mccain_ct * math.log(mccain_ct, 2)
         return entropy  
 
-    def entropyAi(D, Ai):
+    def entropyAi(self, D, Ai):
        id_list = []
-       slices = self.db.slice_by(D, Ai, id_list)
+       slices = self.get_slices(D, Ai);
        entropies = []
        total_entropy = 0;
 
-       for i, mslice in slices:
-           entropies[i] = entropy(mslice)
-       
-       for i, entropy in entropies:
-           total_entropy += len(slices[i])/len(D) * entropies[i]     
+       for mslice in slices:
+           entropies.append(self.entropy(mslice))
+       i=0 
+       for entropy in entropies:
+           print "Entropy["+str(i)+"] = " + str(entropies[i])
+           total_entropy += len(slices[i])/float(len(D)) * entropies[i]    
+           i+=1 
 
        return total_entropy
  
-    # D : Dataset
-    # A : Attributes
-    # T : Tree we're building
-    def c45(self, D, A, doc, threshold):
-        print "Attributes: ", A
-        if self.db.is_homogenous(D):
-            node = doc.createElementNS(None, 'node')
-            node.setAttribute('var', D[0])
-        # No more attributes to consider
-        elif len(A) == 0:
-            most_freq_label = self.find_most_frequent_label(D)
-            node = doc.createElementNS(None, 'node')
-            print "Most Freq label: ", most_freq_label
-            node.setAttribute('var', most_freq_label)
+    def is_homogenous(self, D):
+        print "CHECKING IS HOMOGENOUS"
+        if len(D) == 0:
+            return False
+        mytype = D[0][1]
+        for ele in D:
+            if ele[11] != mytype:
+               return False
+        return True   
+
+    def most_freq(self, D):
+        obama_ct = 0
+        mccain_ct = 0
+        for ele in D:
+            if ele[11] == 1:
+               obama_ct += 1
+            elif ele[11] == 2:
+               mccain_ct += 1
+        if mccain_ct > obama_ct:
+            return "Mccain"
         else:
-            # Step 2: select splitting attribute
+            return "Obama"
+ 
+    def c45(self, D, A, element, threshold):
+        print "Attributes: ", A
+        if self.is_homogenous(D):
+            #print "HOMOGENOUS__________________"
+            node = self.doc.createElement('decision')
+            node.setAttribute('end', str(D[0][11]))
+            element.appendChild(node)
+            print "Label: " + str(D[0][11])
+        elif len(A) == 0:
+            most_freq_label = self.most_freq(D)
+            print "Label: " + most_freq_label
+            node = self.doc.createElement('decision')
+            node.setAttribute('end', most_freq_label)
+            element.appendChild(node)
+        else:
             Ag = self.select_splitting_attr(A, D, threshold)
-
-            # no attribute is good for a split
-            if (Ag == None):
-                most_freq_label = sorted(self.find_most_frequent_label(D))[0]
-                print "NONE Most Freq label: ", most_freq_label
-                node = doc.createElementNS(None, 'node')
-                node.setAttribute('var', most_freq_label)
-                doc.appendChild(node)
-
-        # Step 3: Tree Construction
+            
+            if (Ag == -1):
+                most_freq_label = self.most_freq(D)
+                node = self.doc.createElement('decision')
+                node.setAttribute('end', most_freq_label)
+                element.appendChild(node)
+                print "NONE Most Freq label: " + self.most_freq(D)
             else:
-                node = doc.createElementNS(None, 'node')
-
-                print "Step 3"
-                for attr in A:
-                    Dv = self.data_slice(Ag)
-
+                print "Splitting on: " + Ag
+                node = self.doc.createElement('node')
+                node.setAttribute('var', str(Ag))
+                element.appendChild(node)
+                #minus one becuase we removed ID
+                size = int(self.class_data.size_map[Ag])
+                #print "Size of " + Ag + " is: " + str(size)
+                for i in range(size-1, -1, -1):
+                    #print "iteration " + str(i) + str(Ag)
+                    Dv = self.my_slice(Ag, i+1, D)
+                    #print "LenDV = " + str(len(Dv))
                     if len(Dv) != 0:
-                        self.c45(Dv, A.remove(Ag), doc, threshold)
-                        edge = node.createElementNS(None, 'edge')
-                        edge.setAttribute('var', Ag)
+                        tempAtts = deepcopy(A);
+                        tempAtts.remove(Ag)
+
+                        edge = self.doc.createElement('edge')
+                        edge.setAttribute('var', str(i+1))
+
+                        self.c45(Dv, tempAtts, edge, threshold)
+                        
                         node.appendChild(edge)
-                        doc.appendChild(node)
+                    
+    def get_slices(self, D, Ai):
+        slices=[]
+        index = 1
+        print "Size map val: " + self.class_data.size_map[Ai]
+        for i in range(int(self.class_data.size_map[Ai])):
+            index = i+1
+            slices.append(self.my_slice(Ai, index, D))
+        
+        for sl in slices:
+            print "Slice: "
+            print sl 
+            print "\n"    
+        return slices 
 
-                        print Ag
-
-    def data_slice(self, attr):
-        key = self.attributes.index(attr)
-        lists = {}
-        for i in range(int(self.column_size[key])):
-            val = i+1
-            lists[val] = self.db.slice_by(self.converter[attr], val)
-            #print "Slice " + str(val) + ": " + str(self.db.slice_by(self.converter[attr], val))
-
-        return lists
-
+    def my_slice(self, attr, val, D):
+        attr_ind = self.attributes.index(attr)+1
+        print "Index for " + str(attr) + " is : " + str(attr_ind)
+        mslice = []
+        for row in D:
+            if row[attr_ind] == val:
+                mslice.append(row)
+        return mslice
+ 
     #return -1 when no attribute selected!!
     def select_splitting_attr(self, A, D, threshold):
-        p0 = enthropy(D)
+        p0 = self.entropy(D)
+        print "P0 entropy: " + str(p0)
+        indexes = []
         p = {}
         gain = {}
-        for attr in A: 
-            p[attr] = enthropyAi(D, attr);
+        max_gain = float("-inf")
+        for attr in A:
+            p[attr] = self.entropyAi(D, attr);
+            #print "P(" + str(attr) + ") is: " + str(p[attr])
             gain[attr] = p0 - p[attr]; 
-        best = max(gain)
-        if best > threshold: 
-            return gain.index(best)
+            if gain[attr] > max_gain:
+                max_gain = gain[attr]
+                max_attr = attr
+            print "Attr: " + str(attr) +  " gain: " + str(gain[attr])
+        
+        print "Max gain: " + str(max_gain) + " Max attr: " + str(max_attr)
+        if max_gain > threshold: 
+            return max_attr 
         else:
              return -1;
 
@@ -192,26 +236,26 @@ def main():
     
         domain = open(sys.argv[1], "r")
  
-        #connect to our elections db, stored on my mediatemple  
-        db = ElectionDatabase()
-        db.connect()
- 
-        db.clean_up_nums()       
- 
         #parse the rows directly to the db
         class_data = ClassificationData(sys.argv[2]);
-        class_data.parse_tuples_to_db(db);
+        class_data.parse_tuples();
 
         if num_args == 4:
             restriction = open(check_file(sys.argv[3]), "r") 
-    
-    d = Trainer(domain, class_data, db)
+   
+    document = xml.dom.minidom.Document() 
+    node = document.createElement('Tree')
 
-    print d.data
+    document.appendChild(node)
 
-    doc = xml.dom.minidom.parseString("<Tree></Tree>")
-    print doc.toxml()
-    d.c45(d.data, d.attributes, doc, 0)
+    d = Trainer(domain, class_data, document)
+
+    partial_atts = d.attributes
+    partial_atts.remove("Id")
+    partial_atts.remove("Vote")
+
+    d.c45(d.data, d.attributes, node, 0)
+    print document.toprettyxml()
 
 def check_file(filename):
     if not os.path.exists(filename) or not os.path.isfile(filename): 
@@ -220,12 +264,6 @@ def check_file(filename):
     else:
         return filename
 
-
-# def find_most_frequent_label(D):
-
-# def create_label():
-
-# def enthropy(D):
 
 # D : Training Dataset
 # A : List of Attributes
