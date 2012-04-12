@@ -220,7 +220,7 @@ class ClassificationData(CSVData):
                     if len(x)< 1:
                         x = row[i] = -1
                     x = row[i] = int(x)
-                print tuple(row)
+                #print tuple(row)
                 self.tuples.append(tuple(row))
             row_ct += 1
         self.build_size_map()
