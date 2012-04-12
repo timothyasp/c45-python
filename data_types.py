@@ -210,11 +210,11 @@ class ClassificationData(CSVData):
         row_ct = 0
         for row in reader:
             if row_ct == 0:
-               self.attributes = row
+                self.attributes = row
             elif row_ct == 1:
-               self.domain_size = tuple(row)
+                self.domain_size = tuple(row)
             elif row_ct == 2:
-               self.category = row;
+                self.category = row;
             else:    
                 for i, x in enumerate(row):
                     if len(x)< 1:
