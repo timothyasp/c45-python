@@ -7,6 +7,7 @@ from data_types import CSVData, ClassificationData
 errors = 0
 successes = 0
 total = 0
+has_category = False
 
 def main():
     num_args = len(sys.argv)
@@ -31,6 +32,9 @@ def main():
                     column_size = row
                 elif i == 2:
                     category = row
+                    if len(category) == 1:
+                        global has_category
+                        has_category = True
 
         print "Data: ", data
         print "Attributes: ", attributes
@@ -46,7 +50,7 @@ def main():
         print_stats()
 
 def classify(node, data, attributes):
- 
+    global has_category, successes, errors
     for child in node.childNodes:
         if child.localName == "edge":
             parent_var = child.parentNode.getAttribute('var')
@@ -55,14 +59,15 @@ def classify(node, data, attributes):
             if str(curr_edge) == str(data[col_index]):
                 classify(child, data, attributes)
         elif child.localName == "decision":
-            if child.getAttribute('end') == data[11]:
-                global successes
-                successes += 1
-                print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
+            if has_category:
+                if child.getAttribute('end') == data[11]:
+                    successes += 1
+                    print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
+                else:
+                    errors += 1
+                    print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
             else:
-                global errors
-                errors += 1
-                print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
+                print child.getAttribute('end')
         elif child.localName == "node" or child.localName == "Tree":
             classify(child, data, attributes)
             
