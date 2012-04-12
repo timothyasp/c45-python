@@ -37,42 +37,35 @@ def main():
         print "Column Size: ", column_size
         print "Category", category
         tree = xml.dom.minidom.parse(decision_file)
+        root = tree.documentElement
+        global total
         for row in data:
-            print "Data: ", row
-            result = iterate(tree, row, attributes)
-            global total
             total += 1
-            print "\n"
+            result = classify(root, row, attributes)
 
         print_stats()
 
-def iterate(node, data, attributes):
-    end = {"2": "McCain",  "1": "Obama"}
-    # decision
+def classify(node, data, attributes):
+ 
     for child in node.childNodes:
         if child.localName == "edge":
             parent_var = child.parentNode.getAttribute('var')
-            curr_edge = child.getAttribute('var')
+            curr_edge = child.getAttribute('num')
             col_index = attributes.index(parent_var)
-
-            if curr_edge == data[col_index]:
-                iterate(child, data, attributes)
+            if str(curr_edge) == str(data[col_index]):
+                classify(child, data, attributes)
         elif child.localName == "decision":
-            if end[child.getAttribute('end')] == data[11]:
+            if child.getAttribute('end') == data[11]:
                 global successes
                 successes += 1
-                print "Success: Expected ", end[child.getAttribute('end')], " Got ", data[11]
+                print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
             else:
                 global errors
                 errors += 1
-                print "Error: Expected ", end[child.getAttribute('end')], " Got ", data[11]
+                print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
         elif child.localName == "node" or child.localName == "Tree":
-            iterate(child, data, attributes)
-    """elif str(node.localName) == str("edge"):
-        print "edge"
-    elif str(node.localName) == str("node"):
-        print "node" """
-
+            classify(child, data, attributes)
+            
 def print_stats():
     global total, successes, errors
 
