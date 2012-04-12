@@ -277,12 +277,5 @@ def check_file(filename):
     else:
         return filename
 
-
-# D : Training Dataset
-# A : List of Attributes
-# T : Constructed Decision tree
-
-#def parse_domain():
-
 if __name__ == '__main__':
     main()
