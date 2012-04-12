@@ -4,10 +4,46 @@ import xml.dom.minidom
 import csv
 from data_types import CSVData, ClassificationData
 
-errors = 0
-successes = 0
-total = 0
-has_category = False
+class Classifier:
+    def __init__(self, decision, csv_f):
+        self.errors = 0
+        self.successes = 0
+        self.total = 0
+        self.has_category = False
+
+        self.decision_file = open(decision, "r")
+        self.csv_reader = csv.reader(open(csv_f, 'r'))
+
+
+    def classify(self, node, data, attributes):
+        for child in node.childNodes:
+            if child.localName == "edge":
+                parent_var = child.parentNode.getAttribute('var')
+                curr_edge = child.getAttribute('num')
+                col_index = attributes.index(parent_var)
+                if str(curr_edge) == str(data[col_index]):
+                    self.classify(child, data, attributes)
+            elif child.localName == "decision":
+                if self.has_category:
+                    if child.getAttribute('end') == data[11]:
+                        self.successes += 1
+                        print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
+                    else:
+                        self.errors += 1
+                        print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
+                else:
+                    print child.getAttribute('end')
+            elif child.localName == "node" or child.localName == "Tree":
+                self.classify(child, data, attributes)
+                
+    def print_stats(self):
+
+        print "Total processed: ", str(self.total)
+        print "Errors: "         , str(self.errors)
+        print "Successes: "      , str(self.successes)
+        print "Accuracy: "       , str(float(self.successes / self.total))
+        print "Error Rate: "     , str(1 - float(self.successes / self.total))
+
 
 def main():
     num_args = len(sys.argv)
@@ -18,11 +54,10 @@ def main():
         return
     # If they are read them in
     else: 
-        decision_file = open(sys.argv[2], "r")
-        csv_reader = csv.reader(open(sys.argv[1], 'r'))
+        classifier = Classifier(sys.argv[2], sys.argv[1])
 
         data = []
-        for i, row in enumerate(csv_reader):
+        for i, row in enumerate(classifier.csv_reader):
             if i >= 3:
                 data.append(row)
             else:
@@ -33,52 +68,19 @@ def main():
                 elif i == 2:
                     category = row
                     if len(category) == 1:
-                        global has_category
-                        has_category = True
+                        classifier.has_category = True
 
         print "Data: ", data
         print "Attributes: ", attributes
         print "Column Size: ", column_size
         print "Category", category
-        tree = xml.dom.minidom.parse(decision_file)
+        tree = xml.dom.minidom.parse(classifier.decision_file)
         root = tree.documentElement
-        global total
         for row in data:
-            total += 1
-            result = classify(root, row, attributes)
+            classifier.total += 1
+            result = classifier.classify(root, row, attributes)
 
-        print_stats()
-
-def classify(node, data, attributes):
-    global has_category, successes, errors
-    for child in node.childNodes:
-        if child.localName == "edge":
-            parent_var = child.parentNode.getAttribute('var')
-            curr_edge = child.getAttribute('num')
-            col_index = attributes.index(parent_var)
-            if str(curr_edge) == str(data[col_index]):
-                classify(child, data, attributes)
-        elif child.localName == "decision":
-            if has_category:
-                if child.getAttribute('end') == data[11]:
-                    successes += 1
-                    print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
-                else:
-                    errors += 1
-                    print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
-            else:
-                print child.getAttribute('end')
-        elif child.localName == "node" or child.localName == "Tree":
-            classify(child, data, attributes)
-            
-def print_stats():
-    global total, successes, errors
-
-    print "Total processed: ", str(total)
-    print "Errors: "         , str(errors)
-    print "Successes: "      , str(successes)
-    print "Accuracy: "       , str(float(successes / total))
-    print "Error Rate: "     , str(1 - float(successes / total))
+        classifier.print_stats()
 
 if __name__ == '__main__':
     main()
