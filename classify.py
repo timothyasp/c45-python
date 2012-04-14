@@ -5,14 +5,18 @@ import csv
 from data_types import CSVData, ClassificationData
 
 class Classifier:
-    def __init__(self, decision, csv_f):
+    def __init__(self):
         self.errors = 0
         self.successes = 0
         self.total = 0
         self.has_category = False
-
-        self.decision_file = open(decision, "r")
-        self.csv_reader = csv.reader(open(csv_f, 'r'))
+        
+        self.classifications = {}
+ 
+        self.true_pos = 0 
+        self.true_neg = 0
+        self.false_pos = 0
+        self.false_neg = 0
 
 
     def classify(self, node, data, attributes):
@@ -24,15 +28,25 @@ class Classifier:
                 if str(curr_edge) == str(data[col_index]):
                     self.classify(child, data, attributes)
             elif child.localName == "decision":
+                self.classifications[data[0]] = child.getAttribute('end') 
                 if self.has_category:
-                    if child.getAttribute('end') == data[11]:
+                    if int(child.getAttribute('end')) == int(data[11]):
+                        if data[11] == 1:
+                            self.true_pos += 1
+                        if data[11] == 2:    
+                            self.true_neg += 1
                         self.successes += 1
                         print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
                     else:
+                        if int(data[11]) == 1:
+                            self.false_pos += 1
+                        if int(data[11]) == 2:
+                            self.false_neg += 1
                         self.errors += 1
+             
                         print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
                 else:
-                    print child.getAttribute('end')
+                    print child.getAttribute('end')  +  str(data[11])
             elif child.localName == "node" or child.localName == "Tree":
                 self.classify(child, data, attributes)
                 
@@ -43,7 +57,12 @@ class Classifier:
         print "Successes: "      , str(self.successes)
         print "Accuracy: "       , str(float(self.successes / self.total))
         print "Error Rate: "     , str(1 - float(self.successes / self.total))
-
+        print "TP" + str(self.true_pos)
+        print "TN" + str(self.true_neg)
+        print "FP" + str(self.false_pos)
+        print "FN" + str(self.false_neg)
+    def get_eval_stats():
+        return (self.true_pos, self.true_neg, self.false_pos, self.false_neg)
 
 def main():
     num_args = len(sys.argv)
@@ -53,32 +72,23 @@ def main():
         print 'Expected input format: python classify.py <csvFile> <XMLFile>'
         return
     # If they are read them in
-    else: 
-        classifier = Classifier(sys.argv[2], sys.argv[1])
+    else:
+ 
+        decision_file = open(sys.argv[2], "r")
 
-        data = []
-        for i, row in enumerate(classifier.csv_reader):
-            if i >= 3:
-                data.append(row)
-            else:
-                if i == 0:
-                    attributes = row
-                elif i == 1:
-                    column_size = row
-                elif i == 2:
-                    category = row
-                    if len(category) == 1:
-                        classifier.has_category = True
+        csv_reader = ClassificationData(sys.argv[1])#csv.reader(open(sys.argv[1], 'r'))
+        csv_reader.parse_tuples()
 
-        print "Data: ", data
-        print "Attributes: ", attributes
-        print "Column Size: ", column_size
-        print "Category", category
-        tree = xml.dom.minidom.parse(classifier.decision_file)
+        classifier = Classifier()
+
+        if len(csv_reader.category) > 0:
+            classifier.has_category = True
+
+        tree = xml.dom.minidom.parse(decision_file)
         root = tree.documentElement
-        for row in data:
+        for row in csv_reader.tuples:
             classifier.total += 1
-            result = classifier.classify(root, row, attributes)
+            result = classifier.classify(root, row, csv_reader.attributes)
 
         classifier.print_stats()
 

@@ -225,6 +225,19 @@ class ClassificationData(CSVData):
             row_ct += 1
         self.build_size_map()
 
+    def parse_restr_tuples(self):
+        reader = csv.reader(open(self.filename, 'r'))
+        self.restr=[]
+        
+        row_ct = 0
+        for row in reader:
+            for i, x in enumerate(row):
+                if len(x)< 1:
+                    x = row[i] = -1
+                    x = row[i] = int(x)
+                self.restr.append(tuple(row))
+            row_ct += 1
+
 class TXTData(Data):
     def __init__(self, filename):
         super(TXTData, self).__init__(filename)		  

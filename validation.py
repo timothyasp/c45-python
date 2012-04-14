@@ -2,7 +2,9 @@ import sys
 import os.path
 import xml.dom.minidom
 import csv
-
+from data_types import ClassificationData
+from inducec45 import Trainer
+from classify import Classifier
 def main():
     num_args = len(sys.argv)
 
@@ -11,18 +13,49 @@ def main():
         print 'Expected input format: python classify.py <csvFile> <XMLFile>'
         return
     # If they are read them in
-    else: 
+    else:
         if num_args == 4:
-            restrictions = open(sys.argv[3], 'r')
-            print restrictions
-        csv_reader = csv.reader(open(sys.argv[1], 'r'))
-        n_fold = int(sys.argv[2])
+            restrictions = ClassificationData(sys.argv[3])
+            restrictions.parse_restr_tuples();
+ 
+        class_data = ClassificationData(sys.argv[1])
+        class_data.parse_tuples()
 
-        print "N Folds: ", n_fold
-        for row in csv_reader:
-            print row
+        validator = Validator([])
+        validator.train(sys.argv[2], class_data)
+        #for row in class_data.tuples:
+        #    print row
 
+class Validator:
+    def __init__(self, restrictions):
+        self.attributes = [];
+        self.true_pos = 0
+        self.true_neg = 0
+        self.false_pos = 0
+        self.false_neg = 0
+        
+        if len(restrictions) > 0:
+            self.restr = restrictions.restr
+        else: 
+            self.restr = restrictions
 
+    def train(self, domain, class_data):
+        document = xml.dom.minidom.Document()
+        node = document.createElement('Tree')
+        document.appendChild(node)
+        d = Trainer(domain, class_data, document)
+        partial_atts = d.attributes
+        partial_atts.remove("Id")
+        partial_atts.remove("Vote")
+      
+        if len(self.restr) > 0:
+            d.rem_restrictions(self.restr)
+
+        d.c45(d.data, d.attributes, node, 0)
+
+        classifier = Classifier()
+        for row in d.data:
+            classifier.classify(document.documentElement, row, class_data.attributes)
         
 
 if __name__ == '__main__':

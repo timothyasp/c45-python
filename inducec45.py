@@ -35,7 +35,19 @@ class Trainer:
         self.category = {'name': self.dom.getElementsByTagName('Category')[0].getAttribute('name'), 'values': self.get_choice()}
         self.cols = self.get_columns()
         self.attributes = self.cols.keys()
-    
+   
+    def rem_restrictions(self, restrictions):
+        restr = restrictions[0]
+        i = 0
+        index = i
+        for x in restr:
+            if int(restr[i]) == -1 and i != 0:
+                column = self.attributes[index]
+                print "Removing " + str(self.attributes[index])
+                self.attributes.remove(self.attributes[index])
+            else:
+                index += 1
+            i+=1 
     def get_columns(self):
         cols = {}
 
@@ -254,7 +266,8 @@ def main():
         class_data.parse_tuples();
 
         if num_args == 4:
-            restriction = open(check_file(sys.argv[3]), "r") 
+            restriction = ClassificationData(sys.argv[3])
+            restriction.parse_restr_tuples();
    
     document = xml.dom.minidom.Document() 
     node = document.createElement('Tree')
@@ -262,6 +275,8 @@ def main():
     document.appendChild(node)
 
     d = Trainer(domain, class_data, document)
+    if num_args == 4: 
+        d.rem_restrictions(restriction.restr)
 
     partial_atts = d.attributes
     partial_atts.remove("Id")
