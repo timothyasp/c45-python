@@ -18,7 +18,6 @@ class Classifier:
         self.false_pos = 0
         self.false_neg = 0
 
-
     def classify(self, node, data, attributes):
         for child in node.childNodes:
             if child.localName == "edge":
@@ -36,6 +35,7 @@ class Classifier:
                         if data[11] == 2:    
                             self.true_neg += 1
                         self.successes += 1
+                        self.total += 1
                         print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
                     else:
                         if int(data[11]) == 1:
@@ -43,24 +43,25 @@ class Classifier:
                         if int(data[11]) == 2:
                             self.false_neg += 1
                         self.errors += 1
-             
+                        self.total += 1
                         print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
                 else:
-                    print child.getAttribute('end')  +  str(data[11])
+                    self.total += 1
+                    print child.getAttribute('end')  
             elif child.localName == "node" or child.localName == "Tree":
                 self.classify(child, data, attributes)
                 
     def print_stats(self):
+        print "Total processed:  ", str(self.total)
+        print "Errors:           ", str(self.errors)
+        print "Successes:        ", str(self.successes)
+        print "Accuracy:         ", str(float(self.successes / self.total))
+        print "Error Rate:       ", str(1 - float(self.successes / self.total))
+        print "TP:               ", str(self.true_pos)
+        print "TN:               ", str(self.true_neg)
+        print "FP:               ", str(self.false_pos)
+        print "FN:               ", str(self.false_neg)
 
-        print "Total processed: ", str(self.total)
-        print "Errors: "         , str(self.errors)
-        print "Successes: "      , str(self.successes)
-        print "Accuracy: "       , str(float(self.successes / self.total))
-        print "Error Rate: "     , str(1 - float(self.successes / self.total))
-        print "TP" + str(self.true_pos)
-        print "TN" + str(self.true_neg)
-        print "FP" + str(self.false_pos)
-        print "FN" + str(self.false_neg)
     def get_eval_stats():
         return (self.true_pos, self.true_neg, self.false_pos, self.false_neg)
 
@@ -81,13 +82,14 @@ def main():
 
         classifier = Classifier()
 
+        print csv_reader.category
+
         if len(csv_reader.category) > 0:
             classifier.has_category = True
 
         tree = xml.dom.minidom.parse(decision_file)
         root = tree.documentElement
         for row in csv_reader.tuples:
-            classifier.total += 1
             result = classifier.classify(root, row, csv_reader.attributes)
 
         classifier.print_stats()

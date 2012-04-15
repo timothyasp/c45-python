@@ -47,6 +47,7 @@ class Validator:
         partial_atts = d.attributes
         partial_atts.remove("Id")
         partial_atts.remove("Vote")
+        print partial_atts
       
         if len(self.restr) > 0:
             d.rem_restrictions(self.restr)
@@ -54,9 +55,28 @@ class Validator:
         d.c45(d.data, d.attributes, node, 0)
 
         classifier = Classifier()
+
+        if len(class_data.category) > 0:
+            classifier.has_category = True
+
         for row in d.data:
             classifier.classify(document.documentElement, row, class_data.attributes)
-        
+            
+        classifier.print_stats()
+
+    #def print_stats(self):
+
+    #def fmeasure(self):
+
+    #def recall(self):
+
+    #def precision(self):
+
+    #def pf(self):
+
+    #def confusion_matrix(self):
+
+    #def accuracy(self):
 
 if __name__ == '__main__':
     main()
