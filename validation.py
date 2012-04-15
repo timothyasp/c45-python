@@ -54,27 +54,46 @@ class Validator:
 
         d.c45(d.data, d.attributes, node, 0)
 
-        classifier = Classifier()
+        self.classifier = Classifier()
 
         if len(class_data.category) > 0:
-            classifier.has_category = True
+            self.classifier.has_category = True
 
         for row in d.data:
-            classifier.classify(document.documentElement, row, class_data.attributes)
+            self.classifier.classify(document.documentElement, row, class_data.attributes)
             
-        classifier.print_stats()
+        self.classifier.print_stats()
 
     #def print_stats(self):
 
-    #def fmeasure(self):
 
-    #def recall(self):
+    def recall(self):
+        TP = self.classifier.true_pos
+        FN = self.classifier.false_neg
 
-    #def precision(self):
+        return float(TP) / (TP + FN)
 
-    #def pf(self):
+    def precision(self):
+        TP = self.classifier.true_pos
+        FP = self.classifier.false_pos
 
-    #def confusion_matrix(self):
+        return float(TP) / (TP + FP)
+
+    def pf(self):
+        TN = self.classifier.true_neg
+        FP = self.classifier.false_pos
+
+        return float(FP) / (FP + TN)
+
+    def fmeasure(self):
+        beta = 2 
+        return float(beta * self.precision() * self.recall()) / (self.precision() + self.recall())
+
+    def confusion_matrix(self):
+        print "###### CONFUSION MATRIX #######"
+        print "                | Classified Positive | Classified Negative |"
+        print "Actual Positive |          " + self.classifier.true_pos + "           |          " + self.classifier.false_neg + "           |"
+        print "Actual Negative |          " + self.classifier.false_pos + "           |           " + self.classifier.true_neg + "          |"
 
     #def accuracy(self):
 
