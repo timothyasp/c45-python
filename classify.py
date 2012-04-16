@@ -28,7 +28,8 @@ class Classifier:
                 if str(curr_edge) == str(data[col_index]):
                     self.classify(child, data, attributes)
             elif child.localName == "decision":
-                self.classifications[data[0]] = child.getAttribute('end') 
+                self.classifications[data[0]] = child.getAttribute('end')
+                self.total += 1 
                 if self.has_category:
                     if int(child.getAttribute('end')) == int(data[11]):
                         if data[11] == 1:
@@ -45,8 +46,8 @@ class Classifier:
                         self.errors += 1
              
                         print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
-                else:
-                    print child.getAttribute('end')  +  str(data[11])
+                #else:
+                #    print child.getAttribute('end')  +  str(data[11])
             elif child.localName == "node" or child.localName == "Tree":
                 self.classify(child, data, attributes)
                 
@@ -61,7 +62,7 @@ class Classifier:
         print "TN" + str(self.true_neg)
         print "FP" + str(self.false_pos)
         print "FN" + str(self.false_neg)
-    def get_eval_stats():
+    def get_eval_stats(self):
         return (self.true_pos, self.true_neg, self.false_pos, self.false_neg)
 
 def main():
@@ -87,7 +88,6 @@ def main():
         tree = xml.dom.minidom.parse(decision_file)
         root = tree.documentElement
         for row in csv_reader.tuples:
-            classifier.total += 1
             result = classifier.classify(root, row, csv_reader.attributes)
 
         classifier.print_stats()
