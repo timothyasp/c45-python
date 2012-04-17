@@ -13,11 +13,10 @@ from copy import deepcopy
 def main():
     num_args = len(sys.argv)
 
-    # Make sure the right number of input files are specified
-    if  num_args < 3 or num_args > 4:
-        print 'Expected input format: python classify.py <csvFile> <XMLFile>'
+    if  num_args < 3 or num_args > 5:
+        print 'Expected input format: python validation.py <domain> <csvdata>'
         return
-    # If they are read them in
+
     else:
         if num_args == 5:
             restrictions = ClassificationData(sys.argv[4])
@@ -34,7 +33,7 @@ def main():
 
         class_data.attributes.remove("Id")
         class_data.attributes.remove("Vote")
-      
+
         for i in range(num_folds):
             holdout_set = data_folds[i]
             training_set = []
@@ -44,6 +43,14 @@ def main():
                         training_set.append(row)
             root = validator.train(sys.argv[1], class_data)
             validator.classify(root, holdout_set, full_attributes)
+        
+        print "Validator stats:"
+        validator.confusion_matrix()
+        print "PF-Measure: " + str(validator.pf())
+        print "Recall: " + str(validator.recall()) 
+        print "Precision: " + str(validator.precision())
+        print "F-Measure: " + str(validator.fmeasure())
+        
 
 class Validator:
     def __init__(self, restrictions):
@@ -52,7 +59,9 @@ class Validator:
         self.true_neg = 0
         self.false_pos = 0
         self.false_neg = 0
-        
+        self.classifier = Classifier()
+        self.classifier.has_category = True
+ 
         if len(restrictions) > 0:
             self.restr = restrictions.restr
         else: 
@@ -87,19 +96,43 @@ class Validator:
         if len(self.restr) > 0:
             d.rem_restrictions(self.restr)
 
-        d.c45(d.data, d.attributes, node, 0)
+        d.c45(d.data, d.attributes, node, .14)
 
         return document.documentElement
 
     def classify(self, root, data, attributes):
-        classifier = Classifier()
-        classifier.has_category = True 
         for row in data:
-            classifier.classify(root, row, attributes)
+            self.classifier.classify(root, row, attributes)
       
-        print classifier.get_eval_stats()
+        print self.classifier.get_eval_stats()
 
-        
+    def recall(self):
+        TP = self.classifier.true_pos
+        FN = self.classifier.false_neg
+
+        return float(TP) / float(TP + FN)
+
+    def precision(self):
+        TP = self.classifier.true_pos
+        FP = self.classifier.false_pos
+
+        return float(TP) / float(TP + FP)
+
+    def pf(self):
+        TN = self.classifier.true_neg
+        FP = self.classifier.false_pos
+
+        return float(FP) / float(FP + TN)
+
+    def fmeasure(self):
+        beta = 2 
+        return float(beta * self.precision() * self.recall()) / (self.precision() + self.recall())
+
+    def confusion_matrix(self):
+        print "###### CONFUSION MATRIX #######"
+        print "                | Classified Positive | Classified Negative |"
+        print "Actual Positive |          " + str(self.classifier.true_pos) + "           |          " + str(self.classifier.false_neg) + "           |"
+        print "Actual Negative |          " + str(self.classifier.false_pos) + "           |           " + str(self.classifier.true_neg) + "          |"
 
 if __name__ == '__main__':
     main()

@@ -18,7 +18,6 @@ class Classifier:
         self.false_pos = 0
         self.false_neg = 0
 
-
     def classify(self, node, data, attributes):
         for child in node.childNodes:
             if child.localName == "edge":
@@ -37,6 +36,7 @@ class Classifier:
                         if data[11] == 2:    
                             self.true_neg += 1
                         self.successes += 1
+                        self.total += 1
                         print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
                     else:
                         if int(data[11]) == 1:
@@ -44,15 +44,11 @@ class Classifier:
                         if int(data[11]) == 2:
                             self.false_neg += 1
                         self.errors += 1
-             
                         print "Error: Expected ", child.getAttribute('end'), " Got ", data[11]
-                #else:
-                #    print child.getAttribute('end')  +  str(data[11])
             elif child.localName == "node" or child.localName == "Tree":
                 self.classify(child, data, attributes)
                 
     def print_stats(self):
-
         print "Total processed: ", str(self.total)
         print "Errors: "         , str(self.errors)
         print "Successes: "      , str(self.successes)
@@ -62,6 +58,7 @@ class Classifier:
         print "TN" + str(self.true_neg)
         print "FP" + str(self.false_pos)
         print "FN" + str(self.false_neg)
+
     def get_eval_stats(self):
         return (self.true_pos, self.true_neg, self.false_pos, self.false_neg)
 
@@ -81,6 +78,8 @@ def main():
         csv_reader.parse_tuples()
 
         classifier = Classifier()
+
+        print csv_reader.category
 
         if len(csv_reader.category) > 0:
             classifier.has_category = True
