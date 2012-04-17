@@ -36,7 +36,6 @@ class Classifier:
                         if data[11] == 2:    
                             self.true_neg += 1
                         self.successes += 1
-                        self.total += 1
                         print "Success: Expected ", child.getAttribute('end'), " Got ", data[11]
                     else:
                         if int(data[11]) == 1:

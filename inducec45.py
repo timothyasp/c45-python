@@ -40,8 +40,12 @@ class Trainer:
         restr = restrictions[0]
         i = 0
         index = i
+        print restr
+        print self.attributes
         for x in restr:
-            if int(restr[i]) == -1 and i != 0:
+            if int(restr[i]) == -1:
+                print str(index)
+                print str(x)
                 column = self.attributes[index]
                 print "Removing " + str(self.attributes[index])
                 self.attributes.remove(self.attributes[index])
@@ -275,12 +279,12 @@ def main():
     document.appendChild(node)
 
     d = Trainer(domain, class_data, document)
-    if num_args == 4: 
-        d.rem_restrictions(restriction.restr)
 
     partial_atts = d.attributes
     partial_atts.remove("Id")
     partial_atts.remove("Vote")
+    if num_args == 4: 
+        d.rem_restrictions(restriction.restr)
 
     d.c45(d.data, d.attributes, node, 0)
     print document.toprettyxml()
